@@ -40,6 +40,7 @@
     "@adobe/json-formula": "^2.0.0",
     "@peculiar/x509": "^1.14.3",
     "highlight.js": "^11.11.1",
+    "wasm-pack": "^0.15.0",
     "yaml": "^2.8.3"
   }
 }
