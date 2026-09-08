@@ -83,9 +83,13 @@
     class="relative rounded-2xl overflow-hidden border-2 transition-all w-[300px] focus:outline-none
       {node.isStub
         ? 'border-dashed border-gray-300 dark:border-gray-600 cursor-default'
-        : isRoot || !onZoom
-          ? 'border-blue-500 shadow-lg cursor-default'
-          : 'border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-sm cursor-pointer'}"
+        : isRevoked
+          ? isRoot || !onZoom
+            ? 'border-red-500 shadow-lg cursor-default'
+            : 'border-red-500 hover:border-red-600 shadow-sm cursor-pointer'
+          : isRoot || !onZoom
+            ? 'border-blue-500 shadow-lg cursor-default'
+            : 'border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-sm cursor-pointer'}"
     style="aspect-ratio: 4/3"
     on:click={() => onZoom && !isRoot && !node.isStub && onZoom(node.manifestIdx)}
   >
@@ -130,18 +134,25 @@
       </div>
     {/if}
 
-    <!-- Top-left C2PA badge — hidden for stub nodes -->
+    <!-- Top-left C2PA badge — turns red and extends with revocation status when revoked; hidden for stub nodes -->
     {#if !node.isStub}
-      <div class="absolute top-2 left-2 flex items-center bg-white/90 dark:bg-gray-900/85 backdrop-blur-sm rounded-lg px-2 py-1 shadow-sm">
-        <img src="{import.meta.env.BASE_URL}content_credentials_icon.svg" alt="" class="w-3.5 h-3.5 flex-shrink-0 dark:brightness-0 dark:invert" />
-      </div>
-    {/if}
-
-    <!-- Top-right Revocation badge if revoked -->
-    {#if isRevoked}
-      <div class="absolute top-2 right-2 flex items-center gap-1 bg-red-600 text-white backdrop-blur-sm rounded-lg px-2 py-0.5 shadow-sm text-xs font-bold animate-pulse">
-        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></svg>
-        <span>Revoked</span>
+      <div
+        class="absolute top-2 left-2 flex items-center gap-1.5 backdrop-blur-sm rounded-lg px-2 py-1 shadow-sm transition-all
+          {isRevoked
+            ? 'bg-red-600 text-white font-semibold text-xs shadow-md ring-1 ring-red-700/50'
+            : 'bg-white/90 dark:bg-gray-900/85 text-gray-700 dark:text-gray-300'}"
+      >
+        <img
+          src="{import.meta.env.BASE_URL}content_credentials_icon.svg"
+          alt="Content Credentials"
+          class="w-3.5 h-3.5 flex-shrink-0 {isRevoked ? 'brightness-0 invert' : 'dark:brightness-0 dark:invert'}"
+        />
+        {#if isRevoked}
+          <span class="flex items-center gap-1">
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></svg>
+            <span>Revoked</span>
+          </span>
+        {/if}
       </div>
     {/if}
 
